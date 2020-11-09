@@ -1,6 +1,6 @@
-use wrap::*;
-use common::math::Vec2;
 use super::Shape;
+use common::math::Vec2;
+use wrap::*;
 
 wrap_shape! {
     ffi::CircleShape => CircleShape
@@ -77,9 +77,10 @@ pub mod ffi {
         pub fn CircleShape_as_shape(slf: *mut CircleShape) -> *mut Shape;
         pub fn Shape_as_circle_shape(slf: *mut Shape) -> *mut CircleShape;
         pub fn CircleShape_get_support(slf: *const CircleShape, d: *const Vec2) -> i32;
-        pub fn CircleShape_get_support_vertex(slf: *const CircleShape,
-                                              d: *const Vec2)
-                                              -> *const Vec2;
+        pub fn CircleShape_get_support_vertex(
+            slf: *const CircleShape,
+            d: *const Vec2,
+        ) -> *const Vec2;
         pub fn CircleShape_get_vertex_count(slf: *const CircleShape) -> i32;
         pub fn CircleShape_get_vertex(slf: *const CircleShape, index: i32) -> *const Vec2;
         pub fn CircleShape_get_pos(slf: *const CircleShape) -> Vec2;

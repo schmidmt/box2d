@@ -40,12 +40,11 @@ pub use self::rope::{RopeJoint, RopeJointDef};
 pub use self::weld::{WeldJoint, WeldJointDef};
 pub use self::wheel::{WheelJoint, WheelJointDef};
 
-
-use std::ops::{Deref, DerefMut};
-use wrap::*;
 use common::math::Vec2;
-use dynamics::world::{World, BodyHandle, JointHandle};
-use user_data::{UserDataTypes, UserData, RawUserData, RawUserDataMut, InternalUserData};
+use dynamics::world::{BodyHandle, JointHandle, World};
+use std::ops::{Deref, DerefMut};
+use user_data::{InternalUserData, RawUserData, RawUserDataMut, UserData, UserDataTypes};
+use wrap::*;
 
 #[repr(C)]
 #[derive(Copy, Clone, PartialEq, Debug)]
@@ -74,7 +73,9 @@ pub enum LimitState {
 }
 
 pub trait JointDef {
-    fn joint_type() -> JointType where Self: Sized;
+    fn joint_type() -> JointType
+    where
+        Self: Sized;
 
     #[doc(hidden)]
     unsafe fn create<U: UserDataTypes>(&self, world: &mut World<U>) -> *mut ffi::Joint;
@@ -128,8 +129,10 @@ pub trait Joint: WrappedBase<ffi::Joint> + FromFFI<ffi::Joint> {
     fn handle(&self) -> JointHandle {
         unsafe { self.base_ptr().handle() }
     }
-    
-    fn assumed_type() -> JointType where Self: Sized;
+
+    fn assumed_type() -> JointType
+    where
+        Self: Sized;
 
     fn get_type(&self) -> JointType {
         unsafe { ffi::Joint_get_type(self.base_ptr()) }
@@ -268,13 +271,12 @@ impl Joint for UnknownJoint {
     }
 }
 
-
 #[doc(hidden)]
 pub mod ffi {
-    pub use ffi::Any;
-    pub use dynamics::body::ffi::Body;
-    use common::math::Vec2;
     use super::JointType;
+    use common::math::Vec2;
+    pub use dynamics::body::ffi::Body;
+    pub use ffi::Any;
 
     pub enum Joint {}
 

@@ -1,8 +1,8 @@
-use wrap::*;
 use common::math::Vec2;
+use dynamics::joints::{Joint, JointDef, JointType};
+use dynamics::world::{BodyHandle, World};
 use user_data::UserDataTypes;
-use dynamics::world::{World, BodyHandle};
-use dynamics::joints::{Joint, JointType, JointDef};
+use wrap::*;
 
 pub struct PrismaticJointDef {
     pub body_a: BodyHandle,
@@ -39,12 +39,14 @@ impl PrismaticJointDef {
         }
     }
 
-    pub fn init<U: UserDataTypes>(&mut self,
-                                  world: &World<U>,
-                                  body_a: BodyHandle,
-                                  body_b: BodyHandle,
-                                  anchor: &Vec2,
-                                  axis: &Vec2) {
+    pub fn init<U: UserDataTypes>(
+        &mut self,
+        world: &World<U>,
+        body_a: BodyHandle,
+        body_b: BodyHandle,
+        anchor: &Vec2,
+        axis: &Vec2,
+    ) {
         self.body_a = body_a;
         self.body_b = body_b;
         let a = world.body(body_a);
@@ -58,26 +60,29 @@ impl PrismaticJointDef {
 
 impl JointDef for PrismaticJointDef {
     fn joint_type() -> JointType
-        where Self: Sized
+    where
+        Self: Sized,
     {
         JointType::Prismatic
     }
 
     unsafe fn create<U: UserDataTypes>(&self, world: &mut World<U>) -> *mut ffi::Joint {
-        ffi::World_create_prismatic_joint(world.mut_ptr(),
-                                          world.body_mut(self.body_a).mut_ptr(),
-                                          world.body_mut(self.body_b).mut_ptr(),
-                                          self.collide_connected,
-                                          self.local_anchor_a,
-                                          self.local_anchor_b,
-                                          self.local_axis_a,
-                                          self.reference_angle,
-                                          self.enable_limit,
-                                          self.lower_translation,
-                                          self.upper_translation,
-                                          self.enable_motor,
-                                          self.max_motor_force,
-                                          self.motor_speed)
+        ffi::World_create_prismatic_joint(
+            world.mut_ptr(),
+            world.body_mut(self.body_a).mut_ptr(),
+            world.body_mut(self.body_b).mut_ptr(),
+            self.collide_connected,
+            self.local_anchor_a,
+            self.local_anchor_b,
+            self.local_axis_a,
+            self.reference_angle,
+            self.enable_limit,
+            self.lower_translation,
+            self.upper_translation,
+            self.enable_motor,
+            self.max_motor_force,
+            self.motor_speed,
+        )
     }
 }
 
@@ -169,29 +174,30 @@ impl PrismaticJoint {
 
 #[doc(hidden)]
 pub mod ffi {
-    pub use dynamics::world::ffi::World;
+    use common::math::Vec2;
     pub use dynamics::body::ffi::Body;
     pub use dynamics::joints::ffi::Joint;
-    use common::math::Vec2;
+    pub use dynamics::world::ffi::World;
 
     pub enum PrismaticJoint {}
 
     extern "C" {
-        pub fn World_create_prismatic_joint(world: *mut World,
-                                            body_a: *mut Body,
-                                            body_b: *mut Body,
-                                            collide_connected: bool,
-                                            local_anchor_a: Vec2,
-                                            local_anchor_b: Vec2,
-                                            local_axis_a: Vec2,
-                                            reference_angle: f32,
-                                            enable_limit: bool,
-                                            lower_translation: f32,
-                                            upper_translation: f32,
-                                            enable_motor: bool,
-                                            max_motor_force: f32,
-                                            motor_speed: f32)
-                                            -> *mut Joint;
+        pub fn World_create_prismatic_joint(
+            world: *mut World,
+            body_a: *mut Body,
+            body_b: *mut Body,
+            collide_connected: bool,
+            local_anchor_a: Vec2,
+            local_anchor_b: Vec2,
+            local_axis_a: Vec2,
+            reference_angle: f32,
+            enable_limit: bool,
+            lower_translation: f32,
+            upper_translation: f32,
+            enable_motor: bool,
+            max_motor_force: f32,
+            motor_speed: f32,
+        ) -> *mut Joint;
         // pub fn PrismaticJointDef_initialize(slf: *mut PrismaticJointDef,
         // body_a: *mut Body,
         // body_b: *mut Body,

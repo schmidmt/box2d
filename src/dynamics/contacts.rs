@@ -1,11 +1,11 @@
-use std::mem;
-use wrap::*;
-use common::math::Transform;
 use collision::{Manifold, WorldManifold};
+use common::math::Transform;
 use dynamics::body::FixtureHandle;
 use dynamics::fixture::Fixture;
 use dynamics::world::BodyHandle;
+use std::mem;
 use user_data::RawUserData;
+use wrap::*;
 
 #[repr(C)]
 #[doc(hidden)]
@@ -110,10 +110,10 @@ impl Contact {
 
 #[doc(hidden)]
 pub mod ffi {
-    pub use dynamics::body::ffi::Body;
-    pub use dynamics::fixture::ffi::Fixture;
     use collision::{Manifold, WorldManifold};
     use common::math::Transform;
+    pub use dynamics::body::ffi::Body;
+    pub use dynamics::fixture::ffi::Fixture;
 
     pub enum Contact {}
 
@@ -139,9 +139,11 @@ pub mod ffi {
         pub fn Contact_reset_restitution(slf: *mut Contact);
         pub fn Contact_set_tangent_speed(slf: *mut Contact, speed: f32);
         pub fn Contact_get_tangent_speed(slf: *const Contact) -> f32;
-        pub fn Contact_evaluate_virtual(slf: *mut Contact,
-                                        m: *mut Manifold,
-                                        xf_a: *const Transform,
-                                        xf_b: *const Transform);
+        pub fn Contact_evaluate_virtual(
+            slf: *mut Contact,
+            m: *mut Manifold,
+            xf_a: *const Transform,
+            xf_b: *const Transform,
+        );
     }
 }

@@ -86,10 +86,10 @@ pub trait UserData<U> {
 
 #[doc(hidden)]
 pub mod ffi {
-    pub use ffi::Any;
     pub use dynamics::body::ffi::Body;
     pub use dynamics::fixture::ffi::Fixture;
     pub use dynamics::joints::ffi::Joint;
+    pub use ffi::Any;
 
     extern "C" {
         pub fn Body_get_user_data(slf: *const Body) -> Any;

@@ -13,7 +13,10 @@ fn main() {
             .define("BOX2D_BUILD_EXAMPLES", "OFF")
             .define("BOX2D_INSTALL_DOC", "OFF")
             .build();
-        println!("cargo:rustc-link-search=native={}/lib", box2d_install_prefix.display());
+        println!(
+            "cargo:rustc-link-search=native={}/lib",
+            box2d_install_prefix.display()
+        );
     };
 
     cc::Build::new()

@@ -1,9 +1,9 @@
 use std::mem;
 use std::ptr;
 
-use wrap::*;
-use common::math::Vec2;
 use super::Shape;
+use common::math::Vec2;
+use wrap::*;
 
 wrap_shape! {
     ffi::EdgeShape => EdgeShape

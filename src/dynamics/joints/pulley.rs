@@ -1,8 +1,8 @@
-use wrap::*;
 use common::math::Vec2;
+use dynamics::joints::{Joint, JointDef, JointType};
+use dynamics::world::{BodyHandle, World};
 use user_data::UserDataTypes;
-use dynamics::world::{World, BodyHandle};
-use dynamics::joints::{Joint, JointType, JointDef};
+use wrap::*;
 
 pub struct PulleyJointDef {
     pub body_a: BodyHandle,
@@ -33,14 +33,16 @@ impl PulleyJointDef {
         }
     }
 
-    pub fn init(&mut self,
-                body_a: BodyHandle,
-                body_b: BodyHandle,
-                ground_a: Vec2,
-                ground_b: Vec2,
-                anchor_a: &Vec2,
-                anchor_b: &Vec2,
-                ratio: f32) {
+    pub fn init(
+        &mut self,
+        body_a: BodyHandle,
+        body_b: BodyHandle,
+        ground_a: Vec2,
+        ground_b: Vec2,
+        anchor_a: &Vec2,
+        anchor_b: &Vec2,
+        ratio: f32,
+    ) {
         assert!(ratio > ::std::f32::EPSILON);
         self.body_a = body_a;
         self.body_b = body_b;
@@ -54,23 +56,26 @@ impl PulleyJointDef {
 
 impl JointDef for PulleyJointDef {
     fn joint_type() -> JointType
-        where Self: Sized
+    where
+        Self: Sized,
     {
         JointType::Pulley
     }
 
     unsafe fn create<U: UserDataTypes>(&self, world: &mut World<U>) -> *mut ffi::Joint {
-        ffi::World_create_pulley_joint(world.mut_ptr(),
-                                       world.body_mut(self.body_a).mut_ptr(),
-                                       world.body_mut(self.body_b).mut_ptr(),
-                                       self.collide_connected,
-                                       self.ground_anchor_a,
-                                       self.ground_anchor_b,
-                                       self.local_anchor_a,
-                                       self.local_anchor_b,
-                                       self.length_a,
-                                       self.length_b,
-                                       self.ratio)
+        ffi::World_create_pulley_joint(
+            world.mut_ptr(),
+            world.body_mut(self.body_a).mut_ptr(),
+            world.body_mut(self.body_b).mut_ptr(),
+            self.collide_connected,
+            self.ground_anchor_a,
+            self.ground_anchor_b,
+            self.local_anchor_a,
+            self.local_anchor_b,
+            self.length_a,
+            self.length_b,
+            self.ratio,
+        )
     }
 }
 
@@ -112,26 +117,27 @@ impl PulleyJoint {
 
 #[doc(hidden)]
 pub mod ffi {
-    pub use dynamics::world::ffi::World;
+    use common::math::Vec2;
     pub use dynamics::body::ffi::Body;
     pub use dynamics::joints::ffi::Joint;
-    use common::math::Vec2;
+    pub use dynamics::world::ffi::World;
 
     pub enum PulleyJoint {}
 
     extern "C" {
-        pub fn World_create_pulley_joint(world: *mut World,
-                                         body_a: *mut Body,
-                                         body_b: *mut Body,
-                                         collide_connected: bool,
-                                         ground_anchor_a: Vec2,
-                                         ground_anchor_b: Vec2,
-                                         local_anchor_a: Vec2,
-                                         local_anchor_b: Vec2,
-                                         length_a: f32,
-                                         length_b: f32,
-                                         ratio: f32)
-                                         -> *mut Joint;
+        pub fn World_create_pulley_joint(
+            world: *mut World,
+            body_a: *mut Body,
+            body_b: *mut Body,
+            collide_connected: bool,
+            ground_anchor_a: Vec2,
+            ground_anchor_b: Vec2,
+            local_anchor_a: Vec2,
+            local_anchor_b: Vec2,
+            length_a: f32,
+            length_b: f32,
+            ratio: f32,
+        ) -> *mut Joint;
         // pub fn PulleyJointDef_initialize(slf: *mut PulleyJointDef,
         // body_a: *mut Body,
         // body_b: *mut Body,

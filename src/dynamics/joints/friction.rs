@@ -1,8 +1,8 @@
-use wrap::*;
 use common::math::Vec2;
+use dynamics::joints::{Joint, JointDef, JointType};
+use dynamics::world::{BodyHandle, World};
 use user_data::UserDataTypes;
-use dynamics::world::{World, BodyHandle};
-use dynamics::joints::{Joint, JointType, JointDef};
+use wrap::*;
 
 pub struct FrictionJointDef {
     pub body_a: BodyHandle,
@@ -27,11 +27,13 @@ impl FrictionJointDef {
         }
     }
 
-    pub fn init<U: UserDataTypes>(&mut self,
-                                  world: &World<U>,
-                                  body_a: BodyHandle,
-                                  body_b: BodyHandle,
-                                  anchor: &Vec2) {
+    pub fn init<U: UserDataTypes>(
+        &mut self,
+        world: &World<U>,
+        body_a: BodyHandle,
+        body_b: BodyHandle,
+        anchor: &Vec2,
+    ) {
         self.body_a = body_a;
         self.body_b = body_b;
         let a = world.body(body_a);
@@ -43,20 +45,23 @@ impl FrictionJointDef {
 
 impl JointDef for FrictionJointDef {
     fn joint_type() -> JointType
-        where Self: Sized
+    where
+        Self: Sized,
     {
         JointType::Friction
     }
 
     unsafe fn create<U: UserDataTypes>(&self, world: &mut World<U>) -> *mut ffi::Joint {
-        ffi::World_create_friction_joint(world.mut_ptr(),
-                                         world.body_mut(self.body_a).mut_ptr(),
-                                         world.body_mut(self.body_b).mut_ptr(),
-                                         self.collide_connected,
-                                         self.local_anchor_a,
-                                         self.local_anchor_b,
-                                         self.max_force,
-                                         self.max_torque)
+        ffi::World_create_friction_joint(
+            world.mut_ptr(),
+            world.body_mut(self.body_a).mut_ptr(),
+            world.body_mut(self.body_b).mut_ptr(),
+            self.collide_connected,
+            self.local_anchor_a,
+            self.local_anchor_b,
+            self.max_force,
+            self.max_torque,
+        )
     }
 }
 
@@ -98,23 +103,24 @@ impl FrictionJoint {
 
 #[doc(hidden)]
 pub mod ffi {
-    pub use dynamics::world::ffi::World;
+    use common::math::Vec2;
     pub use dynamics::body::ffi::Body;
     pub use dynamics::joints::ffi::Joint;
-    use common::math::Vec2;
+    pub use dynamics::world::ffi::World;
 
     pub enum FrictionJoint {}
 
     extern "C" {
-        pub fn World_create_friction_joint(world: *mut World,
-                                           body_a: *mut Body,
-                                           body_b: *mut Body,
-                                           collide_connected: bool,
-                                           local_anchor_a: Vec2,
-                                           local_anchor_b: Vec2,
-                                           max_force: f32,
-                                           max_torque: f32)
-                                           -> *mut Joint;
+        pub fn World_create_friction_joint(
+            world: *mut World,
+            body_a: *mut Body,
+            body_b: *mut Body,
+            collide_connected: bool,
+            local_anchor_a: Vec2,
+            local_anchor_b: Vec2,
+            max_force: f32,
+            max_torque: f32,
+        ) -> *mut Joint;
         pub fn FrictionJoint_as_joint(slf: *mut FrictionJoint) -> *mut Joint;
         pub fn Joint_as_friction_joint(slf: *mut Joint) -> *mut FrictionJoint;
         pub fn FrictionJoint_get_local_anchor_a(slf: *const FrictionJoint) -> *const Vec2;

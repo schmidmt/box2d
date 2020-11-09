@@ -2,9 +2,9 @@ use std::mem;
 use std::ptr;
 use std::slice;
 
-use wrap::*;
+use super::{EdgeShape, Shape};
 use common::math::Vec2;
-use super::{Shape, EdgeShape};
+use wrap::*;
 
 wrap_shape! {
     ffi::ChainShape => ChainShape
@@ -102,8 +102,8 @@ impl Drop for ChainShape {
 
 #[doc(hidden)]
 pub mod ffi {
-    pub use collision::shapes::ffi::Shape;
     pub use collision::shapes::edge::ffi::EdgeShape;
+    pub use collision::shapes::ffi::Shape;
     use common::math::Vec2;
 
     pub enum ChainShape {}
@@ -122,8 +122,6 @@ pub mod ffi {
         pub fn ChainShape_set_prev_vertex(slf: *mut ChainShape, vertex: *const Vec2);
         pub fn ChainShape_get_next_vertex(slf: *const ChainShape, next: &mut Vec2) -> bool;
         pub fn ChainShape_set_next_vertex(slf: *mut ChainShape, vertex: *const Vec2);
-        pub fn ChainShape_get_child_edge(slf: *const ChainShape,
-                                         edge: *mut EdgeShape,
-                                         index: i32);
+        pub fn ChainShape_get_child_edge(slf: *const ChainShape, edge: *mut EdgeShape, index: i32);
     }
 }
